@@ -1,21 +1,20 @@
-from golang:1.12.5-alpine3.9
-workdir /go/src/github.com/rossdylan/dan-demand/
-run apk add bash ca-certificates git gcc g++ libc-dev
+FROM docker.io/golang:1.19-alpine
+WORKDIR /go/src/github.com/galenguyer/dan-demand/
+RUN apk add bash ca-certificates git gcc g++ libc-dev
 
-env GO111MODULE=on
-env GOOS=linux
-env GOARCH=amd64
+ENV GOOS=linux
+ENV GOARCH=amd64
 
-copy go.mod go.sum .
-run go mod download
+COPY go.mod go.sum ./
+RUN go mod download
 
-copy *.go .
-run CGO_ENABLED=1 go build -a -tags netgo -ldflags '-w -extldflags "-static"'
+COPY *.go ./
+RUN CGO_ENABLED=1 go build -a -v -tags netgo -ldflags '-w -extldflags "-static"'
 
-from alpine:latest
-run apk --no-cache add ca-certificates
+FROM docker.io/alpine:latest
+RUN apk --no-cache add ca-certificates
 
-workdir /root/
-copy --from=0 /go/src/github.com/rossdylan/dan-demand/dan-demand .
+WORKDIR /root/
+COPY --from=0 /go/src/github.com/galenguyer/dan-demand/dan-demand ./
 VOLUME ["/config"]
-ENTRYPOINT "/root/dan-demand"
+ENTRYPOINT ["/root/dan-demand"]

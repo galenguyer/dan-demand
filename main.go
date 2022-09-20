@@ -23,6 +23,7 @@ func main() {
 	if err != nil {
 		glog.Fatal(errors.Wrap(err, "failed to load config: "))
 	}
+	glog.Info("Loaded config: ", config)
 
 	engine, err := NewEngine(config)
 	if err != nil {
@@ -30,9 +31,5 @@ func main() {
 	}
 
 	glog.Infof("DanDemand running on %s", config.Server.Address)
-	err = startZPages(config.Server.ZPagesAddress)
-	if err != nil {
-		glog.Fatal(errors.Wrap(err, "failed to start zpages: "))
-	}
 	glog.Fatal(engine.ListenAndServe())
 }

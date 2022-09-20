@@ -15,13 +15,11 @@ const (
 )
 
 type ServerConfig struct {
-	Address       string `toml:"address"`
-	ZPagesAddress string `toml:"zpages_address"`
+	Address string `toml:"address"`
 }
 
 func (sec *ServerConfig) InitFromEnv() {
 	sec.Address = os.Getenv("SERVER_ADDR")
-	sec.ZPagesAddress = os.Getenv("ZPAGES_ADDR")
 }
 
 type SlackConfig struct {
@@ -88,9 +86,6 @@ func LoadConfig(path string) (*DanDemandConfig, error) {
 
 	if config.Server.Address == "" {
 		config.Server.Address = defaultServerAddress
-	}
-	if config.Server.ZPagesAddress == "" {
-		config.Server.ZPagesAddress = defaultZPagesAddress
 	}
 	if config.Twilio.Limit == "" {
 		config.Twilio.Limit = defaultTwilioLimit
